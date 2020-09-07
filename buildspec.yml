@@ -16,7 +16,7 @@ phases:
   build:
     commands:
       - echo "....."
-#      - pip install -r requirements.txt -t hello_world/build/
+      - pip install -r requirements.txt -t build/
       - cp app/*.py build/
       - echo "... ... `date` in `pwd`"
       - echo "S3 Bucket $BUILD_OUTPUT_BUCKET"

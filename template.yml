@@ -10,32 +10,60 @@ Globals:
 
 Resources:
 
-    HelloWorldFunction:
+    PostEndpointsFunction:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
             CodeUri: build/
             Handler: function_1.postEndpoints
-            Runtime: python3.7
+            Runtime: python3.8
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
-                    PARAM1: VALUE
+                    SQS_URL: "https://sqs.us-east-1.amazonaws.com/921940783434/sqs-lambda-teste"
             Events:
                 HelloWorld:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
                     Properties:
-                        Path: /hello
-                        Method: get
+                        Path: /endpoints
+                        Method: post
+                Job:
+                    Type: Schedule
+                    Properties:
+                        Schedule: rate(1 minute)
+
+    DoRequestsFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: build/
+            Handler: function_2.doRequests
+            Runtime: python3.8
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    SQS_URL: "https://sqs.us-east-1.amazonaws.com/921940783434/sqs-lambda-teste"
+            Events:
+              MySQSEvent:
+                Type: SQS
+                Properties:
+                  Queue: arn:aws:sqs:us-east-1:921940783434:sqs-lambda-teste
+                  BatchSize: 1
 
 Outputs:
 
-    HelloWorldApi:
+    EndpointsApi:
       Description: "API Gateway endpoint URL"
       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/teste/"
 
-    HelloWorldFunction:
+    PostEndpointsFunction:
       Description: "Lambda Function ARN"
-      Value: !GetAtt HelloWorldFunction.Arn
+      Value: !GetAtt PostEndpointsFunction.Arn
 
-    HelloWorldFunctionIamRole:
+    PostEndpointsFunctionRole:
       Description: "Implicit IAM Role created for function"
-      Value: !GetAtt HelloWorldFunctionRole.Arn
+      Value: !GetAtt PostEndpointsFunctionRole.Arn
+
+    DoRequestsFunction:
+      Description: "Lambda Function ARN"
+      Value: !GetAtt DoRequestsFunction.Arn
+
+    DoRequestsFunctionRole:
+      Description: "Implicit IAM Role created for function"
+      Value: !GetAtt DoRequestsFunctionRole.Arn
