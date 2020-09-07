@@ -19,6 +19,7 @@ phases:
 #      - pip install -r requirements.txt -t hello_world/build/
       - cp app/*.py build/
       - echo "... ... `date` in `pwd`"
+      - echo "S3 Bucket: $BUILD_OUTPUT_BUCKET"
       - aws cloudformation package --template-file template.yml --s3-bucket $BUILD_OUTPUT_BUCKET --output-template-file packaged.yml
   post_build:
     commands:
