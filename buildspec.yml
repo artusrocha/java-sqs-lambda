@@ -1,0 +1,25 @@
+# Buildspec Reference Doc: https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
+
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "..."
+      # - pipenv check (if pipenv is installed and a Pipfile is in place)
+      # - Alternatively: https://www.owasp.org/index.php/OWASP_Dependency_Check
+  pre_build:
+    commands:
+      - mkdir build
+      - pip install requests
+      - echo "...."
+  build:
+    commands:
+      - echo "....."
+#      - pip install -r requirements.txt -t hello_world/build/
+      - cp app/*.py build/
+      - echo "... ... `date` in `pwd`"
+      - aws cloudformation package --template-file template.yml --s3-bucket $BUILD_OUTPUT_BUCKET --output-template-file packaged.yml
+  post_build:
+    commands:
+      - echo "SAM packaging completed on `date`"
