@@ -13,12 +13,26 @@ Resources:
     PostEndpointsFunction:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
-            CodeUri: build/
+            CodeUri: build/package/
             Handler: function_1.postEndpoints
             Runtime: python3.8
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:
                     SQS_URL: "https://sqs.us-east-1.amazonaws.com/921940783434/sqs-lambda-teste"
+            Policies:
+              - Statement:
+                - Sid: SQSACCESS
+                  Effect: Allow
+                  Action:
+                    - sqs:*
+                  Resource: '*'
+                - Sid: SSMREAD
+                  Effect: Allow
+                  Action:
+                    - ssm:Describe*
+                    - ssm:Get*
+                    - ssm:List*
+                  Resource: '*'
             Events:
                 HelloWorld:
                     Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -33,8 +47,8 @@ Resources:
     DoRequestsFunction:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
-            CodeUri: build/
-            Handler: function_2.doRequests
+            CodeUri: build/package/
+            Handler: function_2.handler
             Runtime: python3.8
             Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
                 Variables:

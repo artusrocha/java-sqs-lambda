@@ -1,20 +1,26 @@
 import json
 import boto3
 import os
-#import requests
+import requests
 
 SQS_URL = os.environ['SQS_URL']
 sqsClient = boto3.client('sqs')
 
-def doRequests(event, context):
+def handler(event, context):
+    for e in event.get("Records"):
+        eventData = json.loads( e.get("body") )
+        print({ "eventData": eventData })
+        doRequest(eventData)
+
+def doRequest(event):
     url = event.get("url")
     params = {'page': event.get("page")} 
-    #r = requests.get(url, params)
-    #data = r.json()
+    r = requests.get(url, params)
+    data = r.json()
     out = {
         "message": "Request is done.",
         "event": event,
-#        "data": data
+        "data": data
     }
     print(out)
     return out

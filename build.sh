@@ -1,14 +1,19 @@
-rm -rf build
-rm packaged.yml
-mkdir build
-cp app/*.py build/
-python -m venv build
-pip install requests
+#!/bin/bash 
 
-aws cloudformation package \
+rm -rf build
+mkdir -p build/package
+
+cp app/*.py build/package/
+#python -m venv build
+pip install -r requirements.txt -t build/package
+
+aws --profile teste \
+    cloudformation package \
     --template-file template.yml \
     --s3-bucket $BUILD_OUTPUT_BUCKET \
-    --output-template-file packaged.yml &&
+    --output-template-file build/packaged.yml &&
 
-aws cloudformation deploy --template packaged.yml \
+aws --profile teste \
+    cloudformation deploy \
+    --template build/packaged.yml \
     --capabilities CAPABILITY_IAM --stack-name $1
